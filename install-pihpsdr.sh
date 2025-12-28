@@ -7,9 +7,19 @@ set -e
 # dl1ycf/pihpsdr
 # ============================================================
 
-SRC_DIR="$HOME/github"
-WDSP_REPO="https://github.com/g0orx/wdsp.git"
-PIHPSDR_REPO="https://github.com/dl1ycf/pihpsdr.git"
+N1AI=1
+if [ ${N1AI} -eq 0 ]
+then
+    # default settings
+    SRC_DIR="$HOME/github"
+    WDSP_REPO="https://github.com/g0orx/wdsp.git"
+    PIHPSDR_REPO="https://github.com/dl1ycf/pihpsdr.git"
+else
+    # n1ai settings
+    SRC_DIR="$HOME/code/hamradio/pihpsdr-g0orx"
+    WDSP_REPO="https://github.com/g0orx/wdsp.git"
+    PIHPSDR_REPO="https://github.com/n1ai/pihpsdr-g0orx.git"
+fi
 JOBS=$(nproc)
 
 echo "============================================"
@@ -47,8 +57,8 @@ cd "$SRC_DIR"
 # ------------------------------------------------------------
 echo "[3/8] Cloning repositories..."
 
-[ ! -d wdsp ] && git clone "$WDSP_REPO"
-[ ! -d pihpsdr ] && git clone "$PIHPSDR_REPO"
+[ ! -d wdsp ] && git clone "$WDSP_REPO" wdsp
+[ ! -d pihpsdr ] && git clone "$PIHPSDR_REPO" pihpsdr
 
 # ------------------------------------------------------------
 # 4. Build WDSP
@@ -65,6 +75,10 @@ sudo ldconfig
 # ------------------------------------------------------------
 echo "[5/8] Building piHPSDR..."
 cd "$SRC_DIR/pihpsdr"
+if [ ${N1AI} -ne 0 ]; then
+  # switch onto my branch with Juan's changes
+  git switch soapy_sbitx
+fi
 
 # Ensure Soapy is enabled
 if ! grep -q "SOAPYSDR=1" Makefile; then
