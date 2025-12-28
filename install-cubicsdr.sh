@@ -131,8 +131,7 @@ popd
 # Install Icon Fix
 echo "Fix CubicSDR Menu Icon..."
 pushd ~/code/hamradio/sbitx-ham-apps/cubicsdr
-sudo chmod +x ./cubicsdr-icon-fix.sh
-sudo ./cubicsdr-icon-fix.sh
+sudo bash ./cubicsdr-icon-fix.sh
 popd
 
 # Done!
