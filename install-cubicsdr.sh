@@ -53,6 +53,7 @@ sudo apt install -y \
 # Install SDRplay API only if necessary
 n=`ldconfig -p | grep sdrplay | wc -l`
 if [ $n -eq 0 ] 
+then
   banner "SdrPlayAPI"
   SPAPI="SDRplay_RSP_API-Linux-3.15.2.run"
   echo "Installing SDRplay API..."
@@ -64,8 +65,8 @@ if [ $n -eq 0 ]
     echo "Running SDRplay installer (press Enter, then q, then y, then y when prompted)"
    sudo bash ${SPAPI}
   fi
+  popd
 fi
-popd
 
 # Install SoapySDRPlay
 banner "SoapySPlay"
@@ -144,6 +145,7 @@ cd CubicSDR
 git pull
 rm -rf build
 mkdir -p build && cd build
+# Note: -DUSE_AUDIO=ON and -DUSE_PORTAUDIO=ON do nothing - what was the intent?
 cmake .. \
     -DCMAKE_BUILD_TYPE=Release \
     -DUSE_HAMLIB=ON \
