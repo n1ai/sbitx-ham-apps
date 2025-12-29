@@ -3,6 +3,11 @@
 # Exit on any error
 set -e
 
+# Set TOP if it isn't already set in the environment
+: "${TOP:=/home/pi}"
+printf "$0: TOP: >%s<\n" $TOP
+[ -z "${TOP}" ] && false
+
 echo "Starting installation process..."
 
 # Update package lists
@@ -44,18 +49,23 @@ sudo apt install -y \
 # sudo ldconfig
 
 # Install SDRplay API
+SPAPI="SDRplay_RSP_API-Linux-3.15.2.run"
+banner "Sp-API"
 echo "Installing SDRplay API..."
-mkdir -p ~/code/hamradio/SDRplay-API
-pushd ~/code/hamradio/SDRplay-API
-wget -nc https://www.sdrplay.com/software/SDRplay_RSP_API-Linux-3.15.2.run
-chmod +x SDRplay_RSP_API-Linux-3.15.2.run
-echo "Running SDRplay installer (press Enter, then q, then y, then y when prompted)"
-sudo ./SDRplay_RSP_API-Linux-3.15.2.run
+mkdir -p ${TOP}/SDRplay-API
+pushd ${TOP}/SDRplay-API
+if [ ! -f "${SPAPI}" ] 
+then 
+    wget -nc https://www.sdrplay.com/software/${SPAPI}
+    echo "Running SDRplay installer (press Enter, then q, then y, then y when prompted)"
+   sudo bash ${SPAPI}
+fi
 popd
 
 # Install SoapySDRPlay
+banner "SoapySp"
 echo "Installing SoapySDRPlay..."
-pushd ~/code/hamradio
+pushd ${TOP}
 rm -rf SoapySDRPlay
 git clone https://github.com/pothosware/SoapySDRPlay.git
 cd SoapySDRPlay
@@ -68,8 +78,9 @@ SoapySDRUtil --info
 popd
 
 # Install AirSpyHF+ API
+banner "AS-API"
 echo "Installing AirSpyHF+ API..."
-pushd ~/code/hamradio
+pushd ${TOP}
 git clone https://github.com/airspy/airspyhf.git
 cd airspyhf
 mkdir build
@@ -81,8 +92,9 @@ sudo ldconfig
 popd
 
 # Install SoapyAirspyHF
+banner "SoapyAS"
 echo "Installing SoapyAirspyHF..."
-pushd ~/code/hamradio
+pushd ${TOP}
 git clone https://github.com/pothosware/SoapyAirspyHF.git
 cd SoapyAirspyHF
 mkdir build
@@ -111,8 +123,9 @@ popd
 sudo ldconfig
 
 # Install CubicSDR WITH AUDIO SUPPORT
+banner "CuSDR"
 echo "Installing CubicSDR (with ALSA / Audio IQ support)..."
-pushd ~/code/hamradio
+pushd ${TOP}
 rm -rf CubicSDR
 git clone https://github.com/cjcliffe/CubicSDR.git
 cd CubicSDR
@@ -130,14 +143,12 @@ popd
 
 # Install Icon Fix
 echo "Fix CubicSDR Menu Icon..."
-pushd ~/code/hamradio/sbitx-ham-apps/cubicsdr
+pushd ${TOP}/sbitx-ham-apps/cubicsdr
 sudo bash ./cubicsdr-icon-fix.sh
 popd
 
 # Done!
 echo "Installation complete!"
-popd
-echo
-echo "IMPORTANT:"
+banner "NOTICE!:"
 echo "Reboot or log out/in before starting CubicSDR."
 
