@@ -8,6 +8,8 @@ set -e
 printf "$0: TOP: >%s<\n" $TOP
 [ -z "${TOP}" ] && false
 
+banner "InstCuSDR"
+banner "Pre-Reqs"
 echo "Starting installation process..."
 
 # Update package lists
@@ -48,27 +50,32 @@ sudo apt install -y \
 # sudo make install
 # sudo ldconfig
 
-# Install SDRplay API
-SPAPI="SDRplay_RSP_API-Linux-3.15.2.run"
-banner "Sp-API"
-echo "Installing SDRplay API..."
-mkdir -p ${TOP}/SDRplay-API
-pushd ${TOP}/SDRplay-API
-if [ ! -f "${SPAPI}" ] 
-then 
+# Install SDRplay API only if necessary
+n=`ldconfig -p | grep sdrplay | wc -l`
+if [ $n -eq 0 ] 
+  banner "SdrPlayAPI"
+  SPAPI="SDRplay_RSP_API-Linux-3.15.2.run"
+  echo "Installing SDRplay API..."
+  mkdir -p ${TOP}/SDRplay-API
+  pushd ${TOP}/SDRplay-API
+  if [ ! -f "${SPAPI}" ] 
+  then 
     wget -nc https://www.sdrplay.com/software/${SPAPI}
     echo "Running SDRplay installer (press Enter, then q, then y, then y when prompted)"
    sudo bash ${SPAPI}
+  fi
 fi
 popd
 
 # Install SoapySDRPlay
-banner "SoapySp"
+banner "SoapySPlay"
 echo "Installing SoapySDRPlay..."
 pushd ${TOP}
-rm -rf SoapySDRPlay
-git clone https://github.com/pothosware/SoapySDRPlay.git
+[ ! -d  SoapySDRPlay ] && \
+  git clone https://github.com/pothosware/SoapySDRPlay.git
 cd SoapySDRPlay
+git pull 
+rm -rf build
 mkdir -p build && cd build
 cmake ..
 make -j4
@@ -78,13 +85,15 @@ SoapySDRUtil --info
 popd
 
 # Install AirSpyHF+ API
-banner "AS-API"
+banner "AirSpyHF"
 echo "Installing AirSpyHF+ API..."
 pushd ${TOP}
-git clone https://github.com/airspy/airspyhf.git
+[ ! -d  airspyhf ] && \
+  git clone https://github.com/airspy/airspyhf.git
 cd airspyhf
-mkdir build
-cd build
+git pull
+rm -rf build 
+mkdir build && cd build
 cmake .. -Wno-dev -DINSTALL_UDEV_RULES=ON -DUSE_UACCESS_RULES=ON |& tee cmake.log
 make -j4 |& tee make.log
 sudo make install
@@ -92,13 +101,16 @@ sudo ldconfig
 popd
 
 # Install SoapyAirspyHF
-banner "SoapyAS"
+banner "SoapyAirSpy"
 echo "Installing SoapyAirspyHF..."
 pushd ${TOP}
-git clone https://github.com/pothosware/SoapyAirspyHF.git
+rm -rf SoapyAirspyHF
+[ ! -d  SoapyAirspyHF ] && \
+  git clone https://github.com/pothosware/SoapyAirspyHF.git
 cd SoapyAirspyHF
-mkdir build
-cd build
+git pull
+rm -rf build
+mkdir build && cd build
 cmake .. |& tee cmake.log
 make -j4 |& tee make.log
 sudo make install
@@ -120,15 +132,17 @@ popd
 # cmake .. -DCMAKE_BUILD_TYPE=Release
 # make -j4
 # sudo make install
-sudo ldconfig
+# sudo ldconfig
 
 # Install CubicSDR WITH AUDIO SUPPORT
-banner "CuSDR"
+banner "CubicSDR"
 echo "Installing CubicSDR (with ALSA / Audio IQ support)..."
 pushd ${TOP}
-rm -rf CubicSDR
-git clone https://github.com/cjcliffe/CubicSDR.git
+[ ! -d  CubicSDR ] && \
+  git clone https://github.com/cjcliffe/CubicSDR.git
 cd CubicSDR
+git pull
+rm -rf build
 mkdir -p build && cd build
 cmake .. \
     -DCMAKE_BUILD_TYPE=Release \
@@ -136,7 +150,7 @@ cmake .. \
     -DUSE_AUDIO=ON \
     -DUSE_PORTAUDIO=ON \
     	|& tee cmake.log
-make -j8
+make -j4
 sudo make install
 sudo ldconfig
 popd

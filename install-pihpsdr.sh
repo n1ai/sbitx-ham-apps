@@ -131,9 +131,9 @@ echo
 echo "To verify SoapySDR:"
 echo "  SoapySDRUtil --find"
 echo
-echo "GPIO users:"
-echo "Add to /boot/config.txt if needed:"
-echo "  gpio=4-13,16-27=ip,pu"
-echo
-echo "First run will generate FFTW wisdom."
-echo "============================================"
+#echo "GPIO users:"
+#echo "Add to /boot/config.txt if needed:"
+#echo "  gpio=4-13,16-27=ip,pu"
+#echo
+#echo "First run will generate FFTW wisdom."
+#echo "============================================"
