@@ -4,9 +4,7 @@
 set -e
 
 # Set TOP if it isn't already set in the environment
-: "${TOP:=/home/pi}"
-printf "$0: TOP: >%s<\n" $TOP
-[ -z "${TOP}" ] && false
+: "${TOP:=${HOME}}"
 
 banner "InstCuSDR"
 banner "Pre-Reqs"

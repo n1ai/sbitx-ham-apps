@@ -12,13 +12,15 @@ if [ ${N1AI} -eq 0 ]
 then
     # default settings
     SRC_DIR="$HOME/github"
-    WDSP_REPO="https://github.com/g0orx/wdsp.git"
     PIHPSDR_REPO="https://github.com/dl1ycf/pihpsdr.git"
+    WDSP_REPO="https://github.com/g0orx/wdsp.git"
 else
     # n1ai settings
-    SRC_DIR="$HOME/code/hamradio/pihpsdr-g0orx"
-    WDSP_REPO="https://github.com/g0orx/wdsp.git"
+    # Set TOP if it isn't already set in the environment
+    : "${TOP:=${HOME}}"
+    SRC_DIR="${TOP}/pihpsdr-g0orx"
     PIHPSDR_REPO="https://github.com/n1ai/pihpsdr-g0orx.git"
+    WDSP_REPO="https://github.com/g0orx/wdsp.git"
 fi
 JOBS=$(nproc)
 
