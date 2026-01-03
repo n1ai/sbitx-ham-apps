@@ -21,6 +21,8 @@ public:
     ~SBITXDevice() override;
 
     // Identification / info
+	std::string getDriverKey( void ) const override;
+	std::string getHardwareKey( void ) const override;
     SoapySDR::Kwargs getHardwareInfo() const override;
 
     

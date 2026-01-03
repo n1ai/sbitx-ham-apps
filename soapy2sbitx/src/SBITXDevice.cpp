@@ -93,8 +93,20 @@ SBITXDevice::~SBITXDevice()
     closeAlsaPlayback();
 }
 
+std::string SBITXDevice::getDriverKey( void ) const
+{
+	return("sBITX-SW");
+}
+
+std::string SBITXDevice::getHardwareKey( void ) const
+{
+	return("sBITX-HW");
+}
+
 SoapySDR::Kwargs SBITXDevice::getHardwareInfo() const
 {
+    // This is displayed by  SoapySDRUtil --make  --args="driver=sbitx"`
+    // This is displayed by  SoapySDRUtil --probe --args="driver=sbitx"
     SoapySDR::Kwargs info;
     info["origin"] = "sbitx";
     info["alsa_capture"] = alsaDev_;
@@ -105,6 +117,7 @@ SoapySDR::Kwargs SBITXDevice::getHardwareInfo() const
     info["if_hz"] = std::to_string(ifHz_);
     info["ctrl_host"] = ctrlHost_;
     info["ctrl_port"] = std::to_string(ctrlPort_);
+
     return info;
 }
 

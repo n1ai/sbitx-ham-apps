@@ -5,8 +5,13 @@ static SoapySDR::KwargsList findSBITX(const SoapySDR::Kwargs &)
 {
     SoapySDR::KwargsList results;
     SoapySDR::Kwargs dev;
-    dev["driver"] = "sbitx";
-    dev["label"] = "sBitx (ALSA IQ bridge)";
+
+    // This is displayed by  SoapySDRUtil --find
+    dev["device"]       = "sBITX";
+    dev["version"]      = "1.0";
+    dev["part_id"]      = "SBITX-ALSA-IQ";
+    dev["serial"]       = "SBITX-007";
+    dev["label"]        = "sBitx (ALSA IQ bridge)";
     results.push_back(dev);
     return results;
 }
